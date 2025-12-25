@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Chest X-ray AI Demo | Precise Annotate</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style>
+        :root {
+            --bg: #050816;
+            --bg-soft: rgba(15, 23, 42, 0.92);
+            --accent: #34d399;
+            --accent-soft: rgba(52, 211, 153, 0.18);
+            --danger: #f97373;
+            --text-main: #f9fafb;
+            --text-muted: #9ca3af;
+            --border-soft: rgba(148, 163, 184, 0.35);
+            --radius-lg: 18px;
+            --shadow-soft: 0 18px 45px rgba(15, 23, 42, 0.65);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            color: var(--text-main);
+            background:
+                radial-gradient(circle at 10% 20%, rgba(56, 189, 248, 0.18) 0, transparent 40%),
+                radial-gradient(circle at 80% 0%, rgba(94, 234, 212, 0.16) 0, transparent 45%),
+                radial-gradient(circle at 20% 80%, rgba(244, 114, 182, 0.1) 0, transparent 45%),
+                var(--bg);
+        }
+
+        .page {
+            max-width: 1120px;
+            margin: 0 auto;
+            padding: 24px 16px 40px;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand-mark {
+            width: 32px;
+            height: 32px;
+            border-radius: 999px;
+            background: radial-gradient(circle at 30% 20%, #a5b4fc, #22c55e);
+            box-shadow: 0 0 24px rgba(52, 211, 153, 0.6);
+        }
+
+        .brand-name {
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            color: #e5e7eb;
+        }
+
+        .nav-pill {
+            font-size: 0.85rem;
+            padding: 6px 12px;
+            border-radius: 999px;
+            border: 1px solid rgba(148, 163, 184, 0.4);
+            color: var(--text-muted);
+            background: rgba(15, 23, 42, 0.7);
+        }
+
+        main {
+            display: grid;
+            grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.1fr);
+            gap: 24px;
+        }
+
+        @media (max-width: 840px) {
+            main {
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+
+        .hero {
+            padding-right: 8px;
+        }
+
+        .hero-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(148, 163, 184, 0.35);
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 99px;
+            background: var(--accent);
+            box-shadow: 0 0 0 5px var(--accent-soft);
+        }
+
+        h1 {
+            font-size: clamp(1.9rem, 2.6vw + 1.2rem, 2.8rem);
+            line-height: 1.1;
+            margin: 0 0 12px;
+        }
+
+        h1 span {
+            background: linear-gradient(120deg, #a5b4fc, #34d399);
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .hero-sub {
+            color: var(--text-muted);
+            font-size: 0.98rem;
+            line-height: 1.6;
+            max-width: 480px;
+            margin-bottom: 16px;
+        }
+
+        .disclaimer {
+            font-size: 0.8rem;
+            color: #fca5a5;
+            background: rgba(239, 68, 68, 0.08);
+            border-radius: 12px;
+            border: 1px solid rgba(239, 68, 68, 0.35);
+            padding: 8px 10px;
+            max-width: 520px;
+        }
+
+        .pill-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 14px;
+        }
+
+        .pill {
+            font-size: 0.78rem;
+            padding: 4px 10px;
+            border-radius: 999px;
+            border: 1px solid rgba(148, 163, 184, 0.4);
+            color: var(--text-muted);
+            background: rgba(15, 23, 42, 0.7);
+        }
+
+        .panel {
+            background: var(--bg-soft);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-soft);
+            box-shadow: var(--shadow-soft);
+            padding: 18px 18px 20px;
+            backdrop-filter: blur(14px);
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        label {
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        input[type="file"] {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        button[type="submit"] {
+            margin-top: 6px;
+            padding: 9px 14px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border-radius: 999px;
+            border: none;
+            cursor: pointer;
+            background: linear-gradient(120deg, #22c55e, #34d399);
+            color: #022c22;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        button[type="submit"]:hover {
+            filter: brightness(1.05);
+        }
+
+        button[type="submit"]:active {
+            transform: translateY(1px);
+        }
+
+        .error-card {
+            margin-top: 10px;
+            font-size: 0.85rem;
+            border-radius: 10px;
+            padding: 8px 10px;
+            border: 1px solid rgba(248, 113, 113, 0.7);
+            background: rgba(127, 29, 29, 0.4);
+            color: #fecaca;
+        }
+
+        .result-wrapper {
+            margin-top: 12px;
+        }
+
+        .metric-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            font-size: 0.85rem;
+            margin-bottom: 6px;
+        }
+
+        .metric-badge {
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: rgba(15, 118, 110, 0.3);
+            border: 1px solid rgba(45, 212, 191, 0.6);
+            color: #a7f3d0;
+        }
+
+        .result-note {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .img-card {
+            margin-top: 14px;
+            border-radius: 14px;
+            overflow: hidden;
+            border: 1px solid rgba(148, 163, 184, 0.45);
+        }
+
+        .img-card img {
+            width: 100%;
+            display: block;
+        }
+
+        .img-caption {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            padding: 8px 10px 9px;
+            background: radial-gradient(circle at 0 0, rgba(59, 130, 246, 0.15), transparent),
+                        rgba(2, 6, 23, 0.9);
+        }
+
+        footer {
+            margin-top: 28px;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div class="page">
+    <header>
+        <div class="brand">
+            <div class="brand-mark"></div>
+            <div class="brand-name">Precise Annotate · Medical AI</div>
+        </div>
+        <div class="nav-pill">
+            Prototype · Chest X-ray Pneumonia Demo
+        </div>
+    </header>
+
+    <main>
+        <!-- LEFT: Hero / Explanation -->
+        <section class="hero">
+            <div class="hero-tag">
+                <span class="dot"></span>
+                Early-stage research demo · Not for clinical use
+            </div>
+
+            <h1>
+                Explainable <span>Chest X-ray</span><br>
+                Pneumonia AI Prototype
+            </h1>
+
+            <p class="hero-sub">
+                Upload a chest X-ray to see how a deep learning model scores pneumonia likelihood
+                and which regions of the image most influenced its decision using Grad-CAM.
+                This helps illustrate how medical AI models behave in practice.
+            </p>
+
+            <div class="disclaimer">
+                ⚠ This interface is for research and educational purposes only.
+                It must <strong>not</strong> be used for diagnosis, treatment decisions,
+                or any clinical workflow.
+            </div>
+
+            <div class="pill-row">
+                <div class="pill">Binary classifier: Normal vs Pneumonia</div>
+                <div class="pill">ResNet18 · Transfer learning</div>
+                <div class="pill">Grad-CAM explainability</div>
+                <div class="pill">Sensitivity-focused decision support mindset</div>
+            </div>
+        </section>
+
+        <!-- RIGHT: Upload + Results -->
+        <section>
+            <div class="panel">
+                <form method="POST" enctype="multipart/form-data">
+                    <label for="file">Upload chest X-ray (JPEG/PNG)</label>
+                    <input type="file" name="file" id="file" accept="image/*" required>
+                    <button type="submit">
+                        Analyse Image
+                        <span>⟶</span>
+                    </button>
+                </form>
+
+                {% if error_msg %}
+                <div class="error-card">
+                    {{ error_msg }}
+                </div>
+                {% endif %}
+
+                {% if prob is not none %}
+                <div class="result-wrapper">
+                    <div class="metric-row">
+                        <div class="metric-badge">
+                            Raw logit: {{ "%.4f"|format(raw_logit) }}
+                        </div>
+                        <div class="metric-badge">
+                            Pneumonia likelihood (sigmoid): {{ "%.4f"|format(prob) }}
+                        </div>
+                    </div>
+
+                    <p class="result-note">
+                        Higher values indicate stronger pneumonia-like patterns
+                        according to the model. Outputs are illustrative only and
+                        should never be treated as clinical advice.
+                    </p>
+                </div>
+                {% endif %}
+
+                {% if heatmap_filename %}
+                <div class="img-card">
+                    <img src="{{ url_for('static', filename='results/' + heatmap_filename) }}" alt="Grad-CAM heatmap">
+                    <div class="img-caption">
+                        Grad-CAM visualisation highlighting the regions that most influenced
+                        the model's pneumonia prediction for the uploaded X-ray.
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        Built as a research prototype by Precise Annotate to demonstrate
+        medical imaging AI workflows, annotation value, and explainability
+        in a safe, non-clinical setting.
+    </footer>
+</div>
+</body>
+</html>
