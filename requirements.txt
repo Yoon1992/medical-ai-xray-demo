@@ -2,10 +2,8 @@
 
 flask
 gunicorn
-torch==2.5.1+cpu
-torchvision==0.20.1+cpu
+torch==2.6.0+cpu
+torchvision==0.21.0+cpu
 numpy
 pillow
 matplotlib
-torchaudio==2.5.1+cpu
-
